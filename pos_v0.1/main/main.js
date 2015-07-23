@@ -1,83 +1,41 @@
-var inputs = [
-    {
-      barcode: 'ITEM000000',
-      name: '可口可乐',
-      unit: '瓶',
-      price: 3.00
-
-    },
-    {
-      barcode: 'ITEM000000',
-      name: '可口可乐',
-      unit: '瓶',
-      price: 3.00
-    },
-    {
-      barcode: 'ITEM000000',
-      name: '可口可乐',
-      unit: '瓶',
-      price: 3.00
-    },
-    {
-      barcode: 'ITEM000000',
-      name: '可口可乐',
-      unit: '瓶',
-      price: 3.00
-    },
-    {
-      barcode: 'ITEM000000',
-      name: '可口可乐',
-      unit: '瓶',
-      price: 3.00
-    },
-    {
-      barcode: 'ITEM000001',
-      name: '雪碧',
-      unit: '瓶',
-      price: 3.00
-    },
-    {
-      barcode: 'ITEM000001',
-      name: '雪碧',
-      unit: '瓶',
-      price: 3.00
-    },
-    {
-      barcode: 'ITEM000004',
-      name: '电池',
-      unit: '个',
-      price: 2.00
-    }
-  ];
-
 function printReceipt(inputs) {
-
+  printReceipt(result);
+  count_each_product(inputs);
 }
 
-function count_same_elements(collection) {
+function count_each_product(obj) {
   var result = [];
-  var temp = objectify(collection);
-  temp.forEach(function(item) {
-    var exist_item = result.filter(function(val){
-      return(item.key === val.key);
+
+  obj.forEach(function(item) {
+    var exist_item = result.filter(function(val) {
+      return val.name === item.name;
     });
 
-    if(exist_item.length === 0) {
+    if (exist_item.length === 0) {
+      item.count = 1;
       result.push(item);
-    } else {
-      exist_item[0].count += item.count;
     }
-  }) ;
+    else {exist_item[0].count += 1;}
+  });
+
   return result;
 }
 
-function objectify(collection) {
-  var temp = collection.map(function(val){
-    return {
-      barcode: 'ITEM000000',
-      name: '可口可乐',
-      unit: '瓶',
-      price: 3.00
-    } ;
+function printReceipt(result) {
+  var total_price = 0;
+  var content = '' + '***<没钱赚商店>收据***\n';
+
+  result.forEach(function(val){
+    total_price += val.price*val.count;
+    content +=
+      '名称：' + val.name + ',' +
+      '数量：' + val.count + val.unit + ',' +
+      '单价：' +val.price.toFixed(2)  + '(元)，' +
+      '小计：' + (val.count*val.price).toFixed(2)  + '(元)\n';
   });
+
+  content += ('----------------------\n' +
+              '总计：' + total_price.toFixed(2) + '(元)\n' +
+              '**********************');
+  console.log(content);
 }
