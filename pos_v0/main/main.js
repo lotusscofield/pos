@@ -1,5 +1,5 @@
 function printReceipt(inputs) {
-  var total_price = count_total(inputs);
+  var total_price = countTotal(inputs);
 
   var content = '' + '***<没钱赚商店>收据***\n';
 
@@ -15,7 +15,7 @@ function printReceipt(inputs) {
   console.log(content);
 }
 
-function count_total(inputs) {
+function countTotal(inputs) {
   var total = 0;
 
   inputs.forEach(function(val){
