@@ -4,19 +4,18 @@ PROMOT_CUT_POINT = 2;
 var allItems = loadAllItems();
 var promotionInfo = (loadPromotions())[0];
 
-function addInfo(inputs) {
-  var temp = [], collection = [];
+function getItem(inputs) {
+  var collection = [];
+  inputs.forEach(function(val) {
+    if (val.indexOf('-') > -1) {
+      count = parseInt(val.slice(BARCODE_CUT_OFF_POINT + 1));
+    } else {count = 1;}
 
-  inputs.forEach(function(item) {
-    temp.push(allItems.filter(function(val) {
-      return val.barcode === item.slice(0, BARCODE_CUT_OFF_POINT);
-    }));
+    collection.push({
+      barcode: val.slice(0, BARCODE_CUT_OFF_POINT = 10),
+      count: count
+    });
   });
-
-  collection = temp.map(function(val) {
-    return val[0];
-  });
-
   return collection;
 }
 
@@ -24,15 +23,32 @@ function countProuduct(collection) {
   var result = [];
   collection.forEach(function(item) {
     var existItem = result.filter(function(val) {
-      return val.name === item.name;
+      return val.barcode === item.barcode;
     });
 
     if (existItem.length === 0) {
-      item.count = 1;
       result.push(item);
+    } else {
+      existItem[0].count += 1;
     }
-    else {existItem[0].count += 1;}
   });
+
+  return result;
+}
+
+function getItemInfo(collection) {
+  var result = [];
+  result = collection.map(function(val) {
+             allItems.forEach(function(item) {
+               if (val.barcode === item.barcode) {
+                 val.name = item.name;
+                 val.unit = item.unit;
+                 val.price = item.price;
+               }
+             });
+
+             return val;
+           });
 
   return result;
 }
@@ -46,59 +62,60 @@ function findPromotGoods(collection) {
   });
 
   promotGoods = temp.filter(function(val) {
-    if(val.length !== 0)
+    if (val.length !== 0)
       return val[0];
+  }).map(function(val) {
+    return val[0];
   });
 
-  return promotGoods = promotGoods.map(function(val) {
-      return val[0];
-  });
+  return promotGoods;
 }
 
-function print(collectionA, weight) {
-  var realTotalPrice = 0, goodsPrice = 0, saved = 0, promotedTotalPrice = 0;
-  var collectionB = findPromotGoods(collectionA);
+function print(collectionA, collectionB) {
+  var saved = 0, totalPrice = 0;
   var content = '' + '***<没钱赚商店>收据***\n';
 
   collectionA.forEach(function(val) {
-    realTotalPrice += val.price * val.count;
+    var subTotal = 0;
 
-    if (collectionB.filter(function(item) {return val === item;}) !== 0) {
-      goodsPrice = val.price * (val.count - parseInt(val.count / 3));
-    } else {
-        goodsPrice = weight * val.price;
-      } //else {
-    //   goodsPrice = val.price * val.count;
-    // }
+    subTotal = val.price * val.count;
 
-    promotedTotalPrice += goodsPrice;
-    content +='名称：' + val.name + '，数量：' + (val.count === 1 ? val.count : weight) + val.unit + '，' +
-              '单价：' + val.price.toFixed(2) + '(元)，' + '小计：' + goodsPrice.toFixed(2) + '(元)\n';
+    collectionB.forEach(function(item) {
+      var eachSaved = item.price * parseInt(item.count / 3);
+      if (val.barcode === item.barcode) {
+        subTotal = val.price * val.count - eachSaved;
+      }
+    });
+
+    totalPrice += subTotal;
+    content += '名称：' + val.name + '，' +
+               '数量：' + val.count + val.unit + '，' +
+               '单价：' + val.price.toFixed(2) + '(元)，' +
+               '小计：' + subTotal.toFixed(2) + '(元)\n';
   });
 
-  content +=  '----------------------\n' +
-              '挥泪赠送商品：\n';
+  content +=   '----------------------\n' +
+               '挥泪赠送商品：\n';
 
   collectionB.forEach(function(val) {
-    saved += val.price * parseInt(val.count / 3);
-    content +='名称：' + val.name + '，数量：' + parseInt(val.count / 3) + val.unit + '\n';
+    var savedCount = parseInt(val.count / 3);
+    saved += val.price * savedCount;
+    content += '名称：' + val.name + '，数量：' + savedCount + val.unit + '\n';
   });
 
-  content +=  '----------------------\n' +
-              '总计：' + promotedTotalPrice.toFixed(2) + '(元)\n' +
-              '节省：' + saved.toFixed(2) + '(元)\n' +
-              '**********************';
+  content += '----------------------\n' +
+             '总计：' + totalPrice.toFixed(2) + '(元)\n' +
+             '节省：' + saved.toFixed(2) + '(元)\n' +
+            '**********************';
   console.log(content);
 }
 
 function printReceipt(inputs) {
-  var weight = 0;
-  inputs.forEach(function(item) {
-    if (item.indexOf('-') > -1)
-    return weight = item.slice(BARCODE_CUT_OFF_POINT - item.length + 1);
-  });
+  var cartItem = countProuduct(getItem(inputs));
+  var allCartItem = getItemInfo(cartItem);
+  var promotedCartItem = getItemInfo(findPromotGoods(cartItem));
 
-  var collectianA = countProuduct(addInfo(inputs));
+  var result = print(allCartItem, promotedCartItem);
 
-  console.log(print(collectianA, weight));
+  console.log(result);
 }
