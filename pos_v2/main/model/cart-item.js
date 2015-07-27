@@ -1,41 +1,51 @@
 var allItems = loadAllItems();
+var PromotionInfo = loadPromotions();
 
 function CartItem(barcode, count) {
   this.barcode = barcode;
   this.count = count;
-  this.attachProp();
+  this.getInfo(name);
+  this.getInfo(price);
+  this.getInfo(unit);
 }
 
-CartItem.prototype.attachProp = function() {
-  allItems;
-  if (Item.barcode === this.barcode) {
-    this._name = Item.name; //优化为了不暴露属性，使得在外调用时不能随便赋值
-    this._unit = Item.unit;
-    this._price = Item.price;
+CartItem.prototype.getInfo = function(val) {//val是属性的名称：name,price,unit
+  var itemBarcode = this.barcode;
+  if (this._val) {
+    return this._val;
+  }
+  else {
+    var Item = allItems.filter(function(item) {
+      return item.barcode === itemBarcode;
+    });
+
+    this._val = Item.val[0];
+    return this._val;
   }
 };
 
-CartItem.prototype.calculateSubtotal = function(price, count, type) {
+CartItem.prototype.getPromotedCount = function() {
+  var itemCount = this.count;
+  var itemBarcode = this.barcode;
+  promotionInfo[barcodes].filter(function(val) {
+    return itemBarcode === val.barcode;
+  }).forEach(function(item) {
+       itemCount = itemCount - parseInt(itemCount / 3);
+     });
 
+  return itemCount;
 };
 
-CartItem.prototype.getItemInfo = function() {
-  if (this._name) {
-    return this._name;
-  }
-  this.barcode;
-  allItems;
-  this._name = name;
-  return this._name;
+CartItem.prototype.calculateSubtotal = function() {
+  var subTotal = 0;
+  getPromotedCount();
+  subTotal = this.getInfo(price) * this.count;
+
+  return subTotal;
 };
 
-CartItem.prototype.getPromotionCount = function() {
-  this.barcode;
-  this.count;
+CartItem.prototype.getTotal = function() {
+  var total = 0;
+  calculateSubtotal();
+  total += subTotal;
 };
-
-
-
-CartItem.prototype.getSubTotal = function() {
-
-}
