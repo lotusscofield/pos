@@ -1,13 +1,13 @@
 
-(function fn() {
+var currentDate = (function () {
 
   dateDigitToString = function(num) {
     return num < 10 ? '0' + num : num;
   };
 
-  function currentDate() {}
+  var currentDate = new Date();
 
-  CurrentDate.prototype.formattedDateString = function() {
+  Date.prototype.formattedDateString = function() {
     year = dateDigitToString(currentDate.getFullYear());
     month = dateDigitToString(currentDate.getMonth() + 1);
     date = dateDigitToString(currentDate.getDate());
@@ -19,4 +19,5 @@
     return formattedDateString;
   };
 
+  return currentDate.formattedDateString();
 }) ();

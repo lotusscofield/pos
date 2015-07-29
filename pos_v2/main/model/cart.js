@@ -1,5 +1,5 @@
 function  Cart() {
-  this.cart = new CartItem(barcode, count);
+  this.cartIItem = new CartItem(barcode, count);
 }
 
 Cart.prototype.addItem = function (collection) {//collection = [{barcode:x, count:y},  ...]
@@ -11,18 +11,18 @@ Cart.prototype.addItem = function (collection) {//collection = [{barcode:x, coun
     }
   });
 
-  this.cart = newCart
-  return this.cart;
+  this.cartItem = newCart;
+  return this.cartItem;
 };
 
-Cart.prototype.getPromotedCount = function() {
-  this.cart.getPromotedCount();
+Cart.prototype.getPromotedItem = function() {
+  this.cartItem.getPromotedItem();
 };
 
 Cart.prototype.calculateSubtotal = function() {
-  this.cart.calculateSubtotal();
+  this.cartItem.calculateSubtotal();
 };
 
 CartItem.prototype.getTotal = function() {
-  this.cart.getTotal();
+  this.cartItem.getTotal();
 };

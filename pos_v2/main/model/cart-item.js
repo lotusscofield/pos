@@ -24,22 +24,32 @@ CartItem.prototype.getInfo = function(val) {//val是属性的名称：name,price
   }
 };
 
-CartItem.prototype.getPromotedCount = function() {
+CartItem.prototype.getPromotedItem = function() {
   var itemCount = this.count;
   var itemBarcode = this.barcode;
-  promotionInfo[barcodes].filter(function(val) {
+  var promotedItem = [];
+
+  promotedItem = promotionInfo[barcodes].filter(function(val) {
     return itemBarcode === val.barcode;
   }).forEach(function(item) {
-       itemCount = itemCount - parseInt(itemCount / 3);
+       item.count = item.count - parseInt(item.count / 3);
      });
 
-  return itemCount;
+  return promotedItem;
 };
 
 CartItem.prototype.calculateSubtotal = function() {
-  var subTotal = 0;
-  getPromotedCount();
-  subTotal = this.getInfo(price) * this.count;
+  var itemBarcode = this.barcode;
+  var subTotal = this.subTotal = 0;
+  getPromotedItem().forEach(function(val) {
+    if (itemBarcode === val.barcode) {
+      subTotal = this.getInfo(price) * this.count;
+    }
+  });
+
+  if(subTotal === 0){
+    subTotal = this.getInfo(price) * this.count;
+  }
 
   return subTotal;
 };
