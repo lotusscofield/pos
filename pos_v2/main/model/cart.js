@@ -2,23 +2,26 @@ function  Cart() {
   this.cartItems = [];
 }
 
-Cart.prototype.addItem = function (cartItem) {
+Cart.prototype.addItem = function (barcode, count) {
   var result = this.cartItems;
-  result.forEach(function(item) {
-    if(item.barcode === cartItem.barcode) {
-      item.count += cartItem.count;
-    } else {
-      var cartitem = new CartItem(cartItem.barcode,cartItem.count);
+  var Item = result.filter(function(item) {
+    return item.barcode === barcode;
+  });
+    if(Item.length === 0) {
+      cartitem = new CartItem(barcode, count);
       result.push(cartitem);
     }
-  });
+     else {
+       Item[0].count += count;
+    }
+
   this.cartItems = result;
 };
 
 Cart.prototype.getTotal = function() {
   var total = 0;
   this.cartItems.forEach(function(item) {
-    total += item.calculateSubtotal();
+    total += item.subTotal;
   });
 
   return total;
