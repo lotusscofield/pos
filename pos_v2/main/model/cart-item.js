@@ -4,58 +4,53 @@ var PromotionInfo = loadPromotions();
 function CartItem(barcode, count) {
   this.barcode = barcode;
   this.count = count;
-  this.getInfo(name);
-  this.getInfo(price);
-  this.getInfo(unit);
+  this.getName(barcode);
+  this.getPrice(barcode);
+  this.getUnit(barcode);
 }
 
-CartItem.prototype.getInfo = function(val) {//val是属性的名称：name,price,unit
-  var itemBarcode = this.barcode;
-  if (this._val) {
-    return this._val;
-  }
-  else {
-    var Item = allItems.filter(function(item) {
-      return item.barcode === itemBarcode;
-    });
+CartItem.prototype.getName = function() {
+  var barcode = this.barcode;
+  var Item = allItems.filter(function(item) {
+    return item.barcode === barcode;
+  });
 
-    this._val = Item.val[0];
-    return this._val;
-  }
+  this._name = Item[0].name;
 };
 
-CartItem.prototype.getPromotedItem = function() {
-  var itemCount = this.count;
-  var itemBarcode = this.barcode;
+CartItem.prototype.getPrice = function(barcode) {
+  var Item = allItems.filter(function(item) {
+    return item.barcode === barcode;
+  });
+
+  this._price = Item[0].price;
+};
+
+CartItem.prototype.getUnit = function(barcode) {
+  var Item = allItems.filter(function(item) {
+    return item.barcode === barcode;
+  });
+
+  this._unit = Item[0].unit;
+};
+
+CartItem.prototype.countPromotedItem = function() {
+  var barcode = this.barcode;
+  var count = this.count;
   var promotedItem = [];
 
-  promotedItem = promotionInfo[barcodes].filter(function(val) {
-    return itemBarcode === val.barcode;
-  }).forEach(function(item) {
-       item.count = item.count - parseInt(item.count / 3);
-     });
+  promotedItem = promotionInfo[0][barcodes].filter(function(val) {
+    return barcode === val;
+  });
 
-  return promotedItem;
+  if(promotedItem[0] !== 0) {
+    this.count = count - parseInt(count / 3);
+    this.savedCount = parseInt(count / 3);
+  }
 };
 
 CartItem.prototype.calculateSubtotal = function() {
-  var itemBarcode = this.barcode;
-  var subTotal = this.subTotal = 0;
-  getPromotedItem().forEach(function(val) {
-    if (itemBarcode === val.barcode) {
-      subTotal = this.getInfo(price) * this.count;
-    }
-  });
-
-  if(subTotal === 0){
-    subTotal = this.getInfo(price) * this.count;
-  }
-
+  this.countPromotedItem();
+  var subTotal = this._price * this.count;
   return subTotal;
-};
-
-CartItem.prototype.getTotal = function() {
-  var total = 0;
-  calculateSubtotal();
-  total += subTotal;
 };

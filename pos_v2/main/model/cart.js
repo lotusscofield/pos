@@ -1,28 +1,25 @@
 function  Cart() {
-  this.cartIItem = new CartItem(barcode, count);
+  this.cartItems = [];
 }
 
-Cart.prototype.addItem = function (collection) {//collection = [{barcode:x, count:y},  ...]
-  var itemBarcode = this.barcode;
-  var itemCount = this.count;
-  var newCart = collection.forEach(function(val) {
-    if (itemBarcode === val.barcode) {
-      itemCount += val.count;
+Cart.prototype.addItem = function (cartItem) {
+  var result = this.cartItems;
+  result.forEach(function(item) {
+    if(item.barcode === cartItem.barcode) {
+      item.count += cartItem.count;
+    } else {
+      var cartitem = new CartItem(cartItem.barcode,cartItem.count);
+      result.push(cartitem);
     }
   });
-
-  this.cartItem = newCart;
-  return this.cartItem;
+  this.cartItems = result;
 };
 
-Cart.prototype.getPromotedItem = function() {
-  this.cartItem.getPromotedItem();
-};
+Cart.prototype.getTotal = function() {
+  var total = 0;
+  this.cartItems.forEach(function(item) {
+    total += item.calculateSubtotal();
+  });
 
-Cart.prototype.calculateSubtotal = function() {
-  this.cartItem.calculateSubtotal();
-};
-
-CartItem.prototype.getTotal = function() {
-  this.cartItem.getTotal();
+  return total;
 };

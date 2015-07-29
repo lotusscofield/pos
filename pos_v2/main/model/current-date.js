@@ -1,9 +1,9 @@
 
 var currentDate = (function () {
 
-  dateDigitToString = function(num) {
-    return num < 10 ? '0' + num : num;
-  };
+function dateDigitToString(num) {
+  return num < 10 ? '0' + num : num;
+}
 
   var currentDate = new Date();
 
